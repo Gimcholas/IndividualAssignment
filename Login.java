@@ -5,9 +5,8 @@ import java.util.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-public class Login implements ActionListener{
+public class Login extends Interface implements ActionListener{
     
-    JFrame frame;
     JLabel Notification;
     JTextField Name;
     JLabel TextName;
@@ -17,7 +16,7 @@ public class Login implements ActionListener{
 
     List<Account> accounts = new ArrayList<Account>(); 
 
-    Login(){
+    public void MainMenu(){
 
         // Create JFrame
         frame = new JFrame();
@@ -30,25 +29,24 @@ public class Login implements ActionListener{
         frame.add(Notification);
 
         // Add Text
-        TextName = new JLabel("Staff ID: ");
+        TextName = new JLabel("Name : ");
         TextName.setBounds(100, 50, 50, 30);
         frame.add(TextName);
 
-        // Add text field to get name and pw
+        // Add text field to get name
         Name = new JTextField();
         Name.setBounds(200, 50, 150, 30);
         frame.add(Name);
 
-        // // Add Text
+        // Add Text
         TextPassword = new JLabel("Password: ");
         TextPassword.setBounds(100, 100, 100, 30);
         frame.add(TextPassword);
 
-        // Add text field to get name and pw
+        // Add text field to get pw
         Password = new JPasswordField();
         Password.setBounds(200, 100, 150, 30);
         frame.add(Password);
-
 
         // Add Login button
         Login = new JButton("Login");
@@ -60,7 +58,6 @@ public class Login implements ActionListener{
         frame.setLayout(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-
 
     }
 
@@ -105,6 +102,7 @@ public class Login implements ActionListener{
 
     }
 
+    // Check for the existance of the account, and return its type
     private int CheckAccount(String Name, String Password){
 
         // If admin, return 1
@@ -125,7 +123,9 @@ public class Login implements ActionListener{
 
         // If Account is Admin
         if (CheckAccount(Name.getText(), String.valueOf(Password.getPassword())) == 1){
-            new AdminInterface(Name.getText());
+            AdminInterface admin = new AdminInterface();
+            admin.setName(Name.getText());
+            admin.MainMenu();
             frame.dispose();
         }
 

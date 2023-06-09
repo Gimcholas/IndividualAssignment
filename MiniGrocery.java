@@ -6,7 +6,7 @@ public class MiniGrocery extends JFrame{
 
     public MiniGrocery(){
 
-        login = new Login();
+        new Login().MainMenu();
 
     }
 
