@@ -1,14 +1,13 @@
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-public class StaffInterface{
-
+public class AdminInterface {
     JFrame frame;
     JLabel Login;
 
-    StaffInterface(String Name){
+    AdminInterface(String Name){
         frame = new JFrame();
-        frame.setTitle("Staff ID: " + Name);
+        frame.setTitle("Admin ID: " + Name);
         frame.setSize(1000,800);
         
         Login = new JLabel("Welcome " + Name);
@@ -20,5 +19,4 @@ public class StaffInterface{
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
-
 }

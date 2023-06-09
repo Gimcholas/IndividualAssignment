@@ -105,9 +105,17 @@ public class Login implements ActionListener{
 
     }
 
-    private boolean CheckAccount(String Name, String Password){
+    private int CheckAccount(String Name, String Password){
 
-        return accounts.stream().anyMatch(acc -> acc.getName().equals(Name) && acc.getPassword().equals(Password));
+        // If admin, return 1
+        if(accounts.stream().anyMatch(acc -> acc.getName().equals(Name) && acc.getPassword().equals(Password) && acc.getRole().equals("Admin"))){return 1;}
+   
+        // If Staff, return 2
+        else if(accounts.stream().anyMatch(acc -> acc.getName().equals(Name) && acc.getPassword().equals(Password) && acc.getRole().equals("Staff"))){return 2;}
+   
+        // Not found, return -1
+        return -1;
+   
     }
 
     // if Login button is clicked
@@ -115,8 +123,14 @@ public class Login implements ActionListener{
 
         LoadAccounts();
 
-        // If Account exist
-        if (CheckAccount(Name.getText(), String.valueOf(Password.getPassword()))){
+        // If Account is Admin
+        if (CheckAccount(Name.getText(), String.valueOf(Password.getPassword())) == 1){
+            new AdminInterface(Name.getText());
+            frame.dispose();
+        }
+
+        // If Account is Staff
+        else if(CheckAccount(Name.getText(), String.valueOf(Password.getPassword())) == 2){
             new StaffInterface(Name.getText());
             frame.dispose();
         }
