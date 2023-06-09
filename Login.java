@@ -1,5 +1,10 @@
 import java.awt.event.*;
 import javax.swing.*;
+import java.util.*;  
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.stream.Stream;
 
 public class Login implements ActionListener{
     
@@ -9,6 +14,8 @@ public class Login implements ActionListener{
     JPasswordField Password;
     JLabel TextPassword;
     JButton Login;
+
+    List<Account> accounts = new ArrayList<Account>(); 
 
     Login(){
 
@@ -52,9 +59,69 @@ public class Login implements ActionListener{
 
     }
 
+    // create a list of accounts (includes their name password and roles so we can do checking for login)
+    private void LoadAccounts(){
+        
+        // Read from file
+        //https://www.w3schools.com/java/java_files_read.asp
+        try{
+            File myObj = new File("Database/Accounts.md");
+            Scanner myReader = new Scanner(myObj);
+
+            // First two lines are garbage
+            int skipFirstTwoLines = 0;
+
+            // Read line by line
+            while (myReader.hasNextLine()) {
+                String data = myReader.nextLine();
+
+                // Skip first two lines
+                if(skipFirstTwoLines >= 2){
+
+                    //https://stackoverflow.com/a/7935873/15149509
+                    String[] dataArray = data.split("\\|");
+
+                    // insert into account list
+                    this.accounts.add(new Account(dataArray[1],dataArray[2],dataArray[3]));
+
+                }
+                
+                skipFirstTwoLines ++;
+            }
+
+            myReader.close();
+        }
+        
+        // error
+        catch (FileNotFoundException e){
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+    }
+
+    private boolean CheckAccount(String Name, String Password){
+
+        return accounts.stream().anyMatch(acc -> acc.getName().equals(Name) && acc.getPassword().equals(Password));
+    }
+
+    // if Login button is clicked
     public void actionPerformed(ActionEvent e){
-        frame.dispose();
-        new CustomerInterface();
+
+        LoadAccounts();
+
+        // If Account exist
+        if (CheckAccount(Name.getText(), String.valueOf(Password.getPassword()))){
+            frame.dispose();
+            new CustomerInterface();
+        }
+
+        // Account does not exist
+        else{
+            Name.setText("");
+            Password.setText("");
+        }
+        
     }
 
 }
