@@ -4,11 +4,11 @@ import java.util.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.stream.Stream;
 
 public class Login implements ActionListener{
     
     JFrame frame;
+    JLabel Notification;
     JTextField Name;
     JLabel TextName;
     JPasswordField Password;
@@ -21,8 +21,13 @@ public class Login implements ActionListener{
 
         // Create JFrame
         frame = new JFrame();
-        frame.setTitle("MiniGrocery");
-        frame.setSize(500,250);
+        frame.setTitle("Login");
+        frame.setSize(500,270);
+
+        // Add Notification
+        Notification = new JLabel();
+        Notification.setBounds(185, 180, 150, 30);
+        frame.add(Notification);
 
         // Add Text
         TextName = new JLabel("Staff ID: ");
@@ -112,14 +117,15 @@ public class Login implements ActionListener{
 
         // If Account exist
         if (CheckAccount(Name.getText(), String.valueOf(Password.getPassword()))){
+            new StaffInterface(Name.getText());
             frame.dispose();
-            new CustomerInterface();
         }
 
         // Account does not exist
         else{
             Name.setText("");
             Password.setText("");
+            Notification.setText("Account does not exist");
         }
         
     }

@@ -1,1 +1,0 @@
-Scanner scanner = new Scanner(file);
