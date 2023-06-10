@@ -13,7 +13,6 @@ public class AdminInterface extends Interface implements ActionListener{
     JButton AddDiscounts;
     JButton AddItems;
     JButton Logout;
-    String Name;
 
     public void MainMenu(){
 

@@ -110,7 +110,13 @@ public class Login extends Interface implements ActionListener{
    
         // If Staff, return 2
         else if(accounts.stream().anyMatch(acc -> acc.getName().equals(Name) && acc.getPassword().equals(Password) && acc.getRole().equals("Staff"))){return 2;}
-   
+
+        // If new Admin account, return 3
+        else if(accounts.stream().anyMatch(acc -> acc.getName().equals(Name) && acc.getPassword().equals(" ") && acc.getRole().equals("Admin"))){return 3;}
+
+        // If new Staff account, return 4
+        else if(accounts.stream().anyMatch(acc -> acc.getName().equals(Name) && acc.getPassword().equals(" ") && acc.getRole().equals("Staff"))){return 4;}
+
         // Not found, return -1
         return -1;
    
@@ -123,16 +129,34 @@ public class Login extends Interface implements ActionListener{
 
         // If Account is Admin
         if (CheckAccount(Name.getText(), String.valueOf(Password.getPassword())) == 1){
-            AdminInterface admin = new AdminInterface();
-            admin.setName(Name.getText());
-            admin.MainMenu();
+            this.setName(Name.getText());
+            this.setRole("Admin");
+            new AdminInterface().MainMenu();
             frame.dispose();
         }
 
         // If Account is Staff
         else if(CheckAccount(Name.getText(), String.valueOf(Password.getPassword())) == 2){
-            new StaffInterface(Name.getText());
+            new StaffInterface();
             frame.dispose();
+        }
+
+        // If Account is New Admin Account
+        else if(CheckAccount(Name.getText(), String.valueOf(Password.getPassword())) == 3){
+            this.setName(Name.getText());
+            this.setRole("Admin");
+            new SetPassword().MainMenu();
+            frame.dispose();
+
+        }
+
+        // If Account is New Staff Account
+        else if(CheckAccount(Name.getText(), String.valueOf(Password.getPassword())) == 4){
+            this.setName(Name.getText());
+            this.setRole("Staff");
+            new SetPassword().MainMenu();
+            frame.dispose();
+
         }
 
         // Account does not exist

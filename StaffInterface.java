@@ -1,12 +1,12 @@
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-public class StaffInterface{
+public class StaffInterface extends Interface{
 
     JFrame frame;
     JLabel Login;
 
-    StaffInterface(String Name){
+    public void MainMenu(){
         frame = new JFrame();
         frame.setTitle("Staff ID: " + Name);
         frame.setSize(1000,800);
