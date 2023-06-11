@@ -84,7 +84,7 @@ public class Login extends Interface implements ActionListener{
                     String[] dataArray = data.split("\\|");
 
                     // insert into account list
-                    this.accounts.add(new Account(dataArray[1],dataArray[2],dataArray[3]));
+                    if(dataArray != null){this.accounts.add(new Account(dataArray[1],dataArray[2],dataArray[3]));}
 
                 }
                 

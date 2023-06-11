@@ -71,6 +71,4 @@ public class AdminInterface extends Interface implements ActionListener{
 
     }
 
-    public void setName(String Name){this.Name = Name;}
-
 }
