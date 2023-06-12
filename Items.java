@@ -1,8 +1,13 @@
 public class Items {
     
-    String Name,Price,Quantity,Type;
+    String Name,Type;
+    int Quantity;
+    Double Price;
 
-    Items(String Name, String Price, String Quantity, String Type){
+    // tracks items added into cart
+    int Count = 0;
+
+    Items(String Name, Double Price, int Quantity, String Type){
 
         this.Name = Name;
         this.Price = Price;
@@ -12,8 +17,11 @@ public class Items {
     }
 
     public String getName(){return Name;}
-    public String getPrice(){return Price;}
-    public String getQuantity(){return Quantity;}
+    public double getPrice(){return Price;}
+    public int getQuantity(){return Quantity;}
     public String getType(){return Type;}
+    public int getCount(){return Count;}
+    
+    public void setCount(int Count){this.Count = Count;}
 
 }

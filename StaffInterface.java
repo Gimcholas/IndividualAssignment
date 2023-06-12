@@ -43,6 +43,7 @@ public class StaffInterface extends Interface implements ActionListener{
     JPanel NavigationPanel;
     JButton NextPage, PreviousPage;
     JLabel CurrentPage;
+    boolean isEnd = false;
 
     // Bills
     JLabel BillPanelText;
@@ -116,8 +117,10 @@ public class StaffInterface extends Interface implements ActionListener{
 
         // Navigation Button
         NextPage = new JButton("Next >");
+        NextPage.addActionListener(this);
         CurrentPage = new JLabel(String.valueOf(PageNumber));
         PreviousPage = new JButton("< Previous");
+        PreviousPage.addActionListener(this);
         
         // Navigation panel
         NavigationPanel = new JPanel();
@@ -132,6 +135,7 @@ public class StaffInterface extends Interface implements ActionListener{
 
 
         // Items Insertion
+        LoadItems();
         InsertItems(PageNumber);
 
         // Bill Text
@@ -185,7 +189,7 @@ public class StaffInterface extends Interface implements ActionListener{
                     String[] dataArray = data.split("\\|");
 
                     // insert into Items list
-                    if(dataArray != null){this.ListOfItems.add(new Items(dataArray[1],dataArray[2],dataArray[3],dataArray[4]));}
+                    if(dataArray != null){this.ListOfItems.add(new Items(dataArray[1],Double.valueOf(dataArray[2]),Integer.valueOf(dataArray[3]),dataArray[4]));}
 
                 }
                 
@@ -207,33 +211,41 @@ public class StaffInterface extends Interface implements ActionListener{
     // Insert List of Items into Items Panel
     private void InsertItems(int PageNumber){
 
-        LoadItems();
-
-        // As one page has its limit on how many items it can show,
-        // we will have to set the index so the program knows from which index should the items be loaded
-        int LoadIndex = (PageNumber * GridRow);
-
+        // Clear panel
+        ItemListPanel.removeAll();
 
         ItemListPanel.add(TopPanel);
-        // Add GridRow amount of entry
-        for (int i = 0; i < GridRow - 1; i++) {
 
+        int index = 0;
+
+        // Add GridRow amount of entry
+        for (int i = 0; i < (GridRow -1)* PageNumber; i++) {
+            
             // If Items exist
-            if(ListOfItems.size() > i){
+            if(ListOfItems.size() > index){
+
 
                 // Skip items with quantity of 0 and below
-                while(Integer.valueOf(ListOfItems.get(i).getQuantity()) <= 0){i++;}
+                while(Integer.valueOf(ListOfItems.get(index).getQuantity()) <= 0){index++;}
+
+                // Compensate for page number and add entry
+                if(i >= (GridRow-1) * (PageNumber-1)){
+                    setItemEntry(index, i % (GridRow-1));
+                    
+                    // If there is still item entry, then its not the end of the page
+                    isEnd = false;
+                }
                 
-                setItemEntry(i);
+                index++;
             }
 
-            // if no more items to add, add empty row
-            else{ItemListPanel.add(new JLabel());}
+            // if no more items to add, add empty row, and signify end of page
+            else{ItemListPanel.add(new JLabel()); isEnd = true;}
         }
-        
+
     }
 
-    private void setItemEntry(int i){
+    private void setItemEntry(int index, int i){
 
         // Main entry
         JPanel ItemEntry = new JPanel(new GridLayout(1, 7));
@@ -243,44 +255,43 @@ public class StaffInterface extends Interface implements ActionListener{
         JButton AddItem,SubtractItem;
 
         // Item name
-        ItemName = new JLabel(ListOfItems.get(i).getName());
-        ItemName.setName(String.valueOf("Name " + i));
+        ItemName = new JLabel(ListOfItems.get(index).getName());
+        ItemName.setName(String.valueOf("Name " + index));
         ItemName.setHorizontalAlignment(JLabel.CENTER);
         ItemEntry.add(ItemName);
 
         // Item price
-        ItemPrice = new JLabel(ListOfItems.get(i).getPrice());
-        ItemPrice.setName(String.valueOf("Price " + i));
+        ItemPrice = new JLabel(String.valueOf(ListOfItems.get(index).getPrice()));
+        ItemPrice.setName(String.valueOf("Price " + index));
         ItemPrice.setHorizontalAlignment(JLabel.CENTER);
         ItemEntry.add(ItemPrice);
 
         // Item Quantity
-        ItemQuantity = new JLabel(ListOfItems.get(i).getQuantity());
-        ItemQuantity.setName(String.valueOf("Quantity " + i));
+        ItemQuantity = new JLabel(String.valueOf(ListOfItems.get(index).getQuantity()));
+        ItemQuantity.setName(String.valueOf("Quantity " + index));
         ItemQuantity.setHorizontalAlignment(JLabel.CENTER);
         ItemEntry.add(ItemQuantity);
 
         // Seperation
         Seperation = new JLabel();
         ItemEntry.add(Seperation);
-
         
         // -
         SubtractItem = new JButton("-");
-        SubtractItem.setName(String.valueOf(i));
+        SubtractItem.setName(String.valueOf(index)+":"+String.valueOf(i));  // we need index to set count in ListOfItems, i to set count in ItemListPanel
         SubtractItem.addActionListener(this);
         SubtractItem.setHorizontalAlignment(JButton.CENTER);
         ItemEntry.add(SubtractItem);
 
         // Quantity Count
-        ItemCount[i] = new JLabel("0");
+        ItemCount[i] = new JLabel(String.valueOf(ListOfItems.get(index).getCount()));
         ItemCount[i].setName(String.valueOf("Count " + i));
         ItemCount[i].setHorizontalAlignment(JLabel.CENTER);
         ItemEntry.add(ItemCount[i]);
 
         // +
         AddItem = new JButton("+");
-        AddItem.setName(String.valueOf(i));
+        AddItem.setName(String.valueOf(index)+":"+String.valueOf(i));   // we need index to set count in ListOfItems, i to set count in ItemListPanel
         AddItem.addActionListener(this);
         AddItem.setHorizontalAlignment(JButton.CENTER);
         ItemEntry.add(AddItem);
@@ -296,27 +307,54 @@ public class StaffInterface extends Interface implements ActionListener{
         JButton btn = (JButton)e.getSource();
 
         if(btn.getText() == "+"){
-            int index = Integer.valueOf(btn.getName());
+
+            String[] Index_i = btn.getName().split(":");
+            int index = Integer.valueOf(Index_i[0]);
+            int i = Integer.valueOf(Index_i[1]);
+
+            System.out.println(index + ":" + i);
 
             // only allow add when there is enough stock
-            if(Integer.valueOf(ItemCount[index].getText()) < Integer.valueOf(ListOfItems.get(index).getQuantity())){
+            if(Integer.valueOf(ItemCount[i].getText()) < Integer.valueOf(ListOfItems.get(index).getQuantity())){
             
-                ItemCount[index].setText(String.valueOf(Integer.valueOf(ItemCount[index].getText()) + 1));
+                ListOfItems.get(index).setCount(ListOfItems.get(index).getCount()+1);
+                ItemCount[i].setText(String.valueOf(ListOfItems.get(index).getCount()));
             
             }
         
         }
 
-        if(btn.getText() == "-"){
-            int index = Integer.valueOf(btn.getName());
+        else if(btn.getText() == "-"){
+
+            String[] Index_i = btn.getName().split(":");
+            int index = Integer.valueOf(Index_i[0]);
+            int i = Integer.valueOf(Index_i[1]);
+
+            System.out.println(index + ":" + i);
 
             // only allow subtract if item count > 0
-            if(Integer.valueOf(ItemCount[index].getText()) > 0){
+            if(Integer.valueOf(ItemCount[i].getText()) > 0){
                 
-                ItemCount[index].setText(String.valueOf(Integer.valueOf(ItemCount[index].getText()) - 1));
-            
+                ListOfItems.get(index).setCount(ListOfItems.get(index).getCount()-1);
+                ItemCount[i].setText(String.valueOf(ListOfItems.get(index).getCount()));            
             }
         
+        }
+
+        else if(btn.getText() == "Next >" && !isEnd){
+
+            PageNumber++;
+            CurrentPage.setText(String.valueOf(PageNumber));
+            InsertItems(PageNumber);
+
+        }
+
+        else if(btn.getText() == "< Previous" && PageNumber > 1){
+
+            PageNumber--;
+            CurrentPage.setText(String.valueOf(PageNumber));
+            InsertItems(PageNumber);
+
         }
     }
 
