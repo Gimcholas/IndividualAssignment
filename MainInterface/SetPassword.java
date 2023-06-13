@@ -82,8 +82,6 @@ public class SetPassword extends Interface implements ActionListener{
             String oldEntry = "|" + Role + "|" + Name + "| |";
             String newEntry = "|" + Role + "|" + Name + "|" + NewPassword.getText() + "|";
 
-            System.out.println(newEntry);
-
             for (int i = 0; i < fileContent.size(); i++) {
                 if (fileContent.get(i).equals(oldEntry)) {
                     fileContent.set(i, newEntry);

@@ -144,6 +144,8 @@ public class Login extends Interface implements ActionListener{
 
         // If Account is Staff
         else if(CheckAccount(Name.getText(), String.valueOf(Password.getPassword())) == 2){
+            this.setName(Name.getText());
+            this.setRole("Staff");
             new StaffInterface().MainMenu();
             frame.dispose();
         }
@@ -151,7 +153,6 @@ public class Login extends Interface implements ActionListener{
         // If Account is New Admin Account
         else if(CheckAccount(Name.getText(), String.valueOf(Password.getPassword())) == 3){
             this.setName(Name.getText());
-            this.setRole("Admin");
             new SetPassword().MainMenu();
             frame.dispose();
 

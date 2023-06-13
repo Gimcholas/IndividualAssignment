@@ -7,7 +7,6 @@ import javax.swing.JTextField;
 
 import Classes.Interface;
 import Classes.Items;
-import MainInterface.*;
 
 import java.awt.*;
 import java.util.List;
@@ -47,10 +46,9 @@ public class StaffInterface extends Interface implements ActionListener{
     JPanel BillPanel;
     int BillRows = 20;  // Must be MORE THAN 4 = 5 and above
     JButton CheckOutButton;
-    JLabel DiscountAmountLabel;
     int DiscountAmount=0;
-    JLabel BeforeDiscount;
-    JLabel NetPayable;
+    double BeforeDiscount;
+    double NetPayable;
 
     // Bill Navigation
     JButton NextBillPage, PreviouBillPage;
@@ -61,7 +59,6 @@ public class StaffInterface extends Interface implements ActionListener{
 
     // Discounts
     JButton DiscountButton;
-    
 
 
     public void MainMenu(){
@@ -133,12 +130,15 @@ public class StaffInterface extends Interface implements ActionListener{
         CurrentPage = new JLabel(String.valueOf(PageNumber));
         PreviousPage = new JButton("< Previous");
         PreviousPage.addActionListener(this);
+        CheckOutButton = new JButton("Checkout");
+        CheckOutButton.addActionListener(this);
         
         // Navigation panel
         NavigationPanel = new JPanel();
         NavigationPanel.setBounds(400, 725, 300, 75);
         NavigationPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         NavigationPanel.setBackground(Color.GRAY);
+        NavigationPanel.add(CheckOutButton);
         NavigationPanel.add(PreviousPage);
         NavigationPanel.add(CurrentPage);
         NavigationPanel.add(NextPage);
@@ -162,12 +162,10 @@ public class StaffInterface extends Interface implements ActionListener{
         BillPanelText.setHorizontalAlignment(JLabel.CENTER);
 
         // Before discount
-        BeforeDiscount = new JLabel("Before Discount: 0.0");
-        // Bill discount amount
-        DiscountAmountLabel = new JLabel("Discount: " + DiscountAmount + "%");
+        BeforeDiscount = 0;
 
         // NetPayable
-        NetPayable = new JLabel("NetPayable: 0.0");
+        NetPayable = 0;
 
 
         // Bill Navigation
@@ -205,6 +203,8 @@ public class StaffInterface extends Interface implements ActionListener{
     // create a list of items (includes their name price and type so we can add to Items Panel)
     // Note: This is JUST THE CREATION !!! items does not get inserted into items panel YET
     private void LoadItems(){
+
+        ListOfItems.clear();
         
         // Read from file
         //https://www.w3schools.com/java/java_files_read.asp
@@ -401,14 +401,12 @@ public class StaffInterface extends Interface implements ActionListener{
         double discountDouble = 100 - DiscountAmount;
         discountDouble /= 100;
 
-        BeforeDiscount.setText("Before Discount: " + Double.toString(Price));
-        NetPayable.setText("NetPayable: " + Double.toString(Price * discountDouble));
+        BeforeDiscount = Price;
+        NetPayable = Price * discountDouble;
 
-        DiscountAmountLabel = new JLabel("Discount: " + DiscountAmount + "%");
-
-        BillPanel.add(BeforeDiscount);
-        BillPanel.add(DiscountAmountLabel);
-        BillPanel.add(NetPayable);
+        BillPanel.add(new JLabel ("Before Discount: " + BeforeDiscount));
+        BillPanel.add(new JLabel("Discount: " + DiscountAmount + "%"));
+        BillPanel.add(new JLabel("Net Payable: " + NetPayable));
         BillPanel.add(BillNavigation);
 
 
@@ -493,6 +491,14 @@ public class StaffInterface extends Interface implements ActionListener{
             new DiscountInterface(this).MainMenu();
         }
 
+        else if(btn.getText() == "Checkout"){
+            
+            new Checkout(ListOfItems, String.valueOf(DiscountAmount), String.valueOf(BeforeDiscount), String.valueOf(NetPayable));
+            DiscountAmount=0;
+            LoadItems();
+
+        }
+
         InsertItems();
         showBill();
 
@@ -507,5 +513,7 @@ public class StaffInterface extends Interface implements ActionListener{
 
     public int getDiscount(){return DiscountAmount;}
 
-
+    public static void main(String[] args) {
+        new StaffInterface().MainMenu();
+    }
 }
