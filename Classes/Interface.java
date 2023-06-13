@@ -1,5 +1,5 @@
+package Classes;
 import javax.swing.JFrame;
-
 public abstract class Interface {
 
     protected JFrame frame;

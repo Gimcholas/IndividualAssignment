@@ -1,3 +1,4 @@
+package AdminInterfaces;
 import java.awt.event.*;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,6 +10,8 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+
+import Classes.Interface;
 
 public class AddStaff extends Interface implements ActionListener{
     JLabel Notification;
@@ -62,7 +65,7 @@ public class AddStaff extends Interface implements ActionListener{
             // Compile new entry
             String newEntry = "\n|" + (String)StaffTypeDropdown.getSelectedItem() + "|" + Name.getText() + "| |";            
             // Add Staff
-            try {Files.write(Paths.get("./Database/Accounts.md"), newEntry.getBytes(), StandardOpenOption.APPEND);}            
+            try {Files.write(Paths.get("C:\\Users\\End User\\Documents\\MMU Stuff\\java\\IndividualAssignment\\Database\\Accounts.md"), newEntry.getBytes(), StandardOpenOption.APPEND);}            
             // Error
             catch (IOException e) {System.out.println("Error, Check file path");}            
             new AdminInterface().MainMenu();

@@ -1,5 +1,12 @@
+package MainInterface;
 import java.awt.event.*;
 import javax.swing.*;
+
+import AdminInterfaces.AdminInterface;
+import Classes.Account;
+import Classes.Interface;
+import StaffInterfaces.StaffInterface;
+
 import java.util.*;  
 
 import java.io.File;
@@ -67,7 +74,7 @@ public class Login extends Interface implements ActionListener{
         // Read from file
         //https://www.w3schools.com/java/java_files_read.asp
         try{
-            File myObj = new File("Database/Accounts.md");
+            File myObj = new File("C:\\Users\\End User\\Documents\\MMU Stuff\\java\\IndividualAssignment\\Database\\Accounts.md");
             Scanner myReader = new Scanner(myObj);
 
             // First two lines are garbage
@@ -137,7 +144,7 @@ public class Login extends Interface implements ActionListener{
 
         // If Account is Staff
         else if(CheckAccount(Name.getText(), String.valueOf(Password.getPassword())) == 2){
-            new StaffInterface();
+            new StaffInterface().MainMenu();
             frame.dispose();
         }
 

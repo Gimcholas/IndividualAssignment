@@ -1,7 +1,11 @@
+package MainInterface;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+
+import Classes.Interface;
+
 import java.awt.event.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -71,7 +75,7 @@ public class SetPassword extends Interface implements ActionListener{
     private void ResetPassword(){
 
         try{
-            Path FILE_PATH = Paths.get("./Database/Accounts.md");
+            Path FILE_PATH = Paths.get("C:\\Users\\End User\\Documents\\MMU Stuff\\java\\IndividualAssignment\\Database\\Accounts.md");
 
             List<String> fileContent = new ArrayList<>(Files.readAllLines(FILE_PATH, StandardCharsets.UTF_8));
 

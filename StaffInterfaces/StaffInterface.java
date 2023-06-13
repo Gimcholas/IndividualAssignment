@@ -1,8 +1,13 @@
+package StaffInterfaces;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import Classes.Interface;
+import Classes.Items;
+import MainInterface.*;
 
 import java.awt.*;
 import java.util.List;
@@ -16,7 +21,7 @@ import java.util.Scanner;
 public class StaffInterface extends Interface implements ActionListener{
 
     // Items
-    int GridRow = 11,GridColumn = 1;
+    int GridRow = 11,GridColumn = 1;    // Grid row must be 2 and above
     int PageNumber = 1;
     JLabel ItemsPanelText;
     JPanel ItemsPanel;
@@ -24,9 +29,7 @@ public class StaffInterface extends Interface implements ActionListener{
     List<Items> ListOfItems = new ArrayList<Items>();
     JLabel NameText, PriceText, QuantityText;
     JPanel TopPanel;
-
     JLabel[] ItemCount = new JLabel[GridRow-1];
-
     
     // Search panel
     JPanel searchPanel;
@@ -42,15 +45,23 @@ public class StaffInterface extends Interface implements ActionListener{
     // Bills
     JLabel BillPanelText;
     JPanel BillPanel;
+    int BillRows = 20;  // Must be MORE THAN 4 = 5 and above
     JButton CheckOutButton;
-    JLabel DiscountAmount;
+    JLabel DiscountAmountLabel;
+    int DiscountAmount=0;
+    JLabel BeforeDiscount;
     JLabel NetPayable;
-    JButton NextBillPagae, PreviouBillPage;
+
+    // Bill Navigation
+    JButton NextBillPage, PreviouBillPage;
     JLabel BillPage;
     JPanel BillNavigation;
-    int BillPageNumber = 1;
-    int BillRows = 20;
+    int BillPageNumber = 1; // Do not touch
     boolean BillIsEnd = false;
+
+    // Discounts
+    JButton DiscountButton;
+    
 
 
     public void MainMenu(){
@@ -150,29 +161,38 @@ public class StaffInterface extends Interface implements ActionListener{
         BillPanelText.setFont(new Font(BillPanelText.getName(), Font.PLAIN, 30)); // Set font
         BillPanelText.setHorizontalAlignment(JLabel.CENTER);
 
+        // Before discount
+        BeforeDiscount = new JLabel("Before Discount: 0.0");
         // Bill discount amount
-        DiscountAmount = new JLabel("Discount: ");
+        DiscountAmountLabel = new JLabel("Discount: " + DiscountAmount + "%");
 
         // NetPayable
-        NetPayable = new JLabel("NetPayable: ");
+        NetPayable = new JLabel("NetPayable: 0.0");
+
 
         // Bill Navigation
-        NextBillPagae = new JButton("Next >");
-        NextBillPagae.setName("BillNavigation");
-        NextBillPagae.addActionListener(this);
+        NextBillPage = new JButton("Next >");
+        NextBillPage.setName("BillNavigation");
+        NextBillPage.addActionListener(this);
         BillPage = new JLabel(String.valueOf(BillPageNumber));
         PreviouBillPage = new JButton("< Previous");
         PreviouBillPage.setName("BillNavigation");
         PreviouBillPage.addActionListener(this);
+
+        // Discount button
+        DiscountButton = new JButton("Discount");
+        DiscountButton.addActionListener(this);
 
         // Compile Bill Navigation panel
         BillNavigation = new JPanel(new FlowLayout(FlowLayout.CENTER));
         BillNavigation.setBackground(null);
         BillNavigation.add(PreviouBillPage);
         BillNavigation.add(BillPage);
-        BillNavigation.add(NextBillPagae);
+        BillNavigation.add(NextBillPage);
+        BillNavigation.add(DiscountButton);
 
         showBill();
+        
 
         frame.setLocationRelativeTo(null);
         frame.setLayout(null);
@@ -189,7 +209,7 @@ public class StaffInterface extends Interface implements ActionListener{
         // Read from file
         //https://www.w3schools.com/java/java_files_read.asp
         try{
-            File myObj = new File("Database/Items.md");
+            File myObj = new File("C:\\Users\\End User\\Documents\\MMU Stuff\\java\\IndividualAssignment\\Database\\Items.md");
             Scanner myReader = new Scanner(myObj);
 
             // First two lines are garbage
@@ -225,6 +245,7 @@ public class StaffInterface extends Interface implements ActionListener{
 
     }
 
+
     // Insert List of Items into Items Panel
     private void InsertItems(){
 
@@ -247,7 +268,8 @@ public class StaffInterface extends Interface implements ActionListener{
 
                 // Compensate for page number and add entry
                 if(i >= (GridRow-1) * (PageNumber-1)){
-                    setItemEntry(index, i % (GridRow-1));
+
+                    ItemListPanel.add(createItemEntryPanel(index, i % (GridRow-1)));
                     
                     // If there is still item entry, then its not the end of the page
                     itemsIsEnd = false;
@@ -260,9 +282,15 @@ public class StaffInterface extends Interface implements ActionListener{
             else{ItemListPanel.add(new JLabel()); itemsIsEnd = true;}
         }
 
+        //https://stackoverflow.com/a/10367754/15149509
+        ItemsPanel.revalidate();
+        ItemsPanel.repaint();
+
     }
 
-    private void setItemEntry(int index, int i){
+
+    // Solely CREATING JPanel, does not add to anything in and of itself
+    private JPanel createItemEntryPanel(int index, int i){
 
         // Main entry
         JPanel ItemEntry = new JPanel(new GridLayout(1, 7));
@@ -316,23 +344,31 @@ public class StaffInterface extends Interface implements ActionListener{
         // Add item entry
         ItemEntry.setSize(700, (int)ItemEntry.getPreferredSize().getHeight());
         ItemEntry.setBackground(null);
-        ItemListPanel.add(ItemEntry);
+        
+        return ItemEntry;
 
     }
 
 
     private void showBill(){
 
+        // not items (to compensate for text and stuff)
+        int AmountOfnotItems = 5;
+
+
         // Reset Bill is end
         BillIsEnd = false;
 
+        // Price
+        double Price=0;
+        
         // Setup Bill panel
         BillPanel.removeAll();
 
         BillPanel.add(BillPanelText);
 
         // empty space
-        int EmptySpace = BillRows -4;
+        int EmptySpace = BillRows - AmountOfnotItems;
 
         // track amount of items on bill
         int itemTrack = 0;
@@ -342,10 +378,10 @@ public class StaffInterface extends Interface implements ActionListener{
 
             if(ListOfItems.get(i).getCount() > 0){
 
-                System.out.println( (BillRows-4) * (BillPageNumber-1));
+                Price+=ListOfItems.get(i).getPrice() * ListOfItems.get(i).getCount();
 
                 // compensate for page number and add Bill entry
-                if( itemTrack  >= (BillRows-4) * (BillPageNumber-1) && itemTrack < (BillRows-4) * (BillPageNumber)){
+                if( itemTrack  >= (BillRows-AmountOfnotItems) * (BillPageNumber-1) && itemTrack < (BillRows-AmountOfnotItems) * (BillPageNumber)){
 
                     BillPanel.add(new JLabel(ListOfItems.get(i).getName() + ":" + ListOfItems.get(i).getCount()));
                     EmptySpace--;
@@ -355,17 +391,33 @@ public class StaffInterface extends Interface implements ActionListener{
                 itemTrack++;
             
             }
+
         }
 
         // Add empty space after all items are shown, if have empty space means its end of page
         for (int i = 0; i < EmptySpace; i++) {BillPanel.add(new JLabel()); BillIsEnd = true;}
 
+        // calculate discount amount in 0.%% format
+        double discountDouble = 100 - DiscountAmount;
+        discountDouble /= 100;
 
-        BillPanel.add(DiscountAmount);
+        BeforeDiscount.setText("Before Discount: " + Double.toString(Price));
+        NetPayable.setText("NetPayable: " + Double.toString(Price * discountDouble));
+
+        DiscountAmountLabel = new JLabel("Discount: " + DiscountAmount + "%");
+
+        BillPanel.add(BeforeDiscount);
+        BillPanel.add(DiscountAmountLabel);
         BillPanel.add(NetPayable);
         BillPanel.add(BillNavigation);
 
+
+        //https://stackoverflow.com/a/10367754/15149509
+        BillPanel.revalidate();
+        BillPanel.repaint();
+
     }
+
 
     public void actionPerformed(ActionEvent e){
         JButton btn = (JButton)e.getSource();
@@ -384,9 +436,6 @@ public class StaffInterface extends Interface implements ActionListener{
             
             }
 
-            showBill();
-
-        
         }
 
         else if(btn.getText() == "-"){
@@ -395,8 +444,6 @@ public class StaffInterface extends Interface implements ActionListener{
             int index = Integer.valueOf(Index_i[0]);
             int i = Integer.valueOf(Index_i[1]);
 
-            System.out.println(index + ":" + i);
-
             // only allow subtract if item count > 0
             if(Integer.valueOf(ItemCount[i].getText()) > 0){
                 
@@ -404,9 +451,6 @@ public class StaffInterface extends Interface implements ActionListener{
                 ItemCount[i].setText(String.valueOf(ListOfItems.get(index).getCount()));            
             }
 
-            showBill();
-
-        
         }
 
         else if(btn.getText() == "Next >" && btn.getName() == "BillNavigation"){
@@ -416,8 +460,6 @@ public class StaffInterface extends Interface implements ActionListener{
                 BillPageNumber++;
                 BillPage.setText(String.valueOf(BillPageNumber));
 
-                showBill();
-
             }
 
         }
@@ -426,7 +468,6 @@ public class StaffInterface extends Interface implements ActionListener{
 
             PageNumber++;
             CurrentPage.setText(String.valueOf(PageNumber));
-            InsertItems();
 
         }
 
@@ -437,8 +478,6 @@ public class StaffInterface extends Interface implements ActionListener{
                 BillPageNumber--;
                 BillPage.setText(String.valueOf(BillPageNumber));
 
-                showBill();
-
             }
 
         }
@@ -447,16 +486,26 @@ public class StaffInterface extends Interface implements ActionListener{
 
             PageNumber--;
             CurrentPage.setText(String.valueOf(PageNumber));
-            InsertItems();
 
         }
 
+        else if(btn.getText() == "Discount"){
+            new DiscountInterface(this).MainMenu();
+        }
+
+        InsertItems();
+        showBill();
 
     }
 
-
-    public static void main(String[] args) {
-        new StaffInterface().MainMenu();
+    public void setDiscount(String DiscountAmount){
+        
+        this.DiscountAmount = Integer.valueOf(DiscountAmount);
+        showBill();
+    
     }
+
+    public int getDiscount(){return DiscountAmount;}
+
 
 }

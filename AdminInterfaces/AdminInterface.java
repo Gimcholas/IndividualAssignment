@@ -1,8 +1,12 @@
+package AdminInterfaces;
 import java.awt.event.*;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+
+import Classes.Interface;
+import MainInterface.Login;
 
 import java.awt.Font;
 

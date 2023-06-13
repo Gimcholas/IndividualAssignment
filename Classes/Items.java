@@ -1,3 +1,4 @@
+package Classes;
 public class Items {
     
     String Name,Type;
@@ -7,7 +8,7 @@ public class Items {
     // tracks items added into cart
     int Count = 0;
 
-    Items(String Name, Double Price, int Quantity, String Type){
+    public Items(String Name, Double Price, int Quantity, String Type){
 
         this.Name = Name;
         this.Price = Price;
