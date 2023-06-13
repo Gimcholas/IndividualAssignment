@@ -1,14 +1,8 @@
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.border.Border;
 
 import java.awt.*;
 import java.util.List;
@@ -43,7 +37,7 @@ public class StaffInterface extends Interface implements ActionListener{
     JPanel NavigationPanel;
     JButton NextPage, PreviousPage;
     JLabel CurrentPage;
-    boolean isEnd = false;
+    boolean itemsIsEnd = false;
 
     // Bills
     JLabel BillPanelText;
@@ -51,6 +45,13 @@ public class StaffInterface extends Interface implements ActionListener{
     JButton CheckOutButton;
     JLabel DiscountAmount;
     JLabel NetPayable;
+    JButton NextBillPagae, PreviouBillPage;
+    JLabel BillPage;
+    JPanel BillNavigation;
+    int BillPageNumber = 1;
+    int BillRows = 20;
+    boolean BillIsEnd = false;
+
 
     public void MainMenu(){
 
@@ -111,7 +112,7 @@ public class StaffInterface extends Interface implements ActionListener{
         searchPanel.add(SearchButton);
         searchPanel.add(SearchWord);
         searchPanel.setBackground(Color.GRAY);
-        searchPanel.setBounds(0, 725, 400, 75);
+        searchPanel.setBounds(0, 725, 400, 70);
         searchPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         frame.add(searchPanel);
 
@@ -136,26 +137,42 @@ public class StaffInterface extends Interface implements ActionListener{
 
         // Items Insertion
         LoadItems();
-        InsertItems(PageNumber);
+        InsertItems();
+
+        // Bill Panel
+        BillPanel = new JPanel(new GridLayout(BillRows, 1));
+        BillPanel.setBounds(700, 0, 300, 770);
+        BillPanel.setBackground(Color.LIGHT_GRAY);
+        frame.add(BillPanel);
 
         // Bill Text
         BillPanelText = new JLabel("Bill:");
         BillPanelText.setFont(new Font(BillPanelText.getName(), Font.PLAIN, 30)); // Set font
-        BillPanelText.setBounds(830 , 0, (int)BillPanelText.getPreferredSize().getWidth()+10, (int)BillPanelText.getPreferredSize().getHeight()+1);
-        frame.add(BillPanelText);
+        BillPanelText.setHorizontalAlignment(JLabel.CENTER);
 
         // Bill discount amount
         DiscountAmount = new JLabel("Discount: ");
-        DiscountAmount.setBounds(710 , 650, 170 , (int)DiscountAmount.getPreferredSize().getHeight()+1);
-        frame.add(DiscountAmount);
 
-        // Bill Panel
-        BillPanel = new JPanel();
-        BillPanel.setBounds(700, 0, 300, 800);
-        BillPanel.setBackground(Color.LIGHT_GRAY);
-        frame.add(BillPanel);
+        // NetPayable
+        NetPayable = new JLabel("NetPayable: ");
 
+        // Bill Navigation
+        NextBillPagae = new JButton("Next >");
+        NextBillPagae.setName("BillNavigation");
+        NextBillPagae.addActionListener(this);
+        BillPage = new JLabel(String.valueOf(BillPageNumber));
+        PreviouBillPage = new JButton("< Previous");
+        PreviouBillPage.setName("BillNavigation");
+        PreviouBillPage.addActionListener(this);
 
+        // Compile Bill Navigation panel
+        BillNavigation = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        BillNavigation.setBackground(null);
+        BillNavigation.add(PreviouBillPage);
+        BillNavigation.add(BillPage);
+        BillNavigation.add(NextBillPagae);
+
+        showBill();
 
         frame.setLocationRelativeTo(null);
         frame.setLayout(null);
@@ -209,7 +226,7 @@ public class StaffInterface extends Interface implements ActionListener{
     }
 
     // Insert List of Items into Items Panel
-    private void InsertItems(int PageNumber){
+    private void InsertItems(){
 
         // Clear panel
         ItemListPanel.removeAll();
@@ -233,14 +250,14 @@ public class StaffInterface extends Interface implements ActionListener{
                     setItemEntry(index, i % (GridRow-1));
                     
                     // If there is still item entry, then its not the end of the page
-                    isEnd = false;
+                    itemsIsEnd = false;
                 }
                 
                 index++;
             }
 
             // if no more items to add, add empty row, and signify end of page
-            else{ItemListPanel.add(new JLabel()); isEnd = true;}
+            else{ItemListPanel.add(new JLabel()); itemsIsEnd = true;}
         }
 
     }
@@ -303,6 +320,53 @@ public class StaffInterface extends Interface implements ActionListener{
 
     }
 
+
+    private void showBill(){
+
+        // Reset Bill is end
+        BillIsEnd = false;
+
+        // Setup Bill panel
+        BillPanel.removeAll();
+
+        BillPanel.add(BillPanelText);
+
+        // empty space
+        int EmptySpace = BillRows -4;
+
+        // track amount of items on bill
+        int itemTrack = 0;
+
+        // Add added items entry
+        for (int i = 0; i < ListOfItems.size() ; i++) {
+
+            if(ListOfItems.get(i).getCount() > 0){
+
+                System.out.println( (BillRows-4) * (BillPageNumber-1));
+
+                // compensate for page number and add Bill entry
+                if( itemTrack  >= (BillRows-4) * (BillPageNumber-1) && itemTrack < (BillRows-4) * (BillPageNumber)){
+
+                    BillPanel.add(new JLabel(ListOfItems.get(i).getName() + ":" + ListOfItems.get(i).getCount()));
+                    EmptySpace--;
+
+                }
+
+                itemTrack++;
+            
+            }
+        }
+
+        // Add empty space after all items are shown, if have empty space means its end of page
+        for (int i = 0; i < EmptySpace; i++) {BillPanel.add(new JLabel()); BillIsEnd = true;}
+
+
+        BillPanel.add(DiscountAmount);
+        BillPanel.add(NetPayable);
+        BillPanel.add(BillNavigation);
+
+    }
+
     public void actionPerformed(ActionEvent e){
         JButton btn = (JButton)e.getSource();
 
@@ -312,8 +376,6 @@ public class StaffInterface extends Interface implements ActionListener{
             int index = Integer.valueOf(Index_i[0]);
             int i = Integer.valueOf(Index_i[1]);
 
-            System.out.println(index + ":" + i);
-
             // only allow add when there is enough stock
             if(Integer.valueOf(ItemCount[i].getText()) < Integer.valueOf(ListOfItems.get(index).getQuantity())){
             
@@ -321,6 +383,9 @@ public class StaffInterface extends Interface implements ActionListener{
                 ItemCount[i].setText(String.valueOf(ListOfItems.get(index).getCount()));
             
             }
+
+            showBill();
+
         
         }
 
@@ -338,14 +403,43 @@ public class StaffInterface extends Interface implements ActionListener{
                 ListOfItems.get(index).setCount(ListOfItems.get(index).getCount()-1);
                 ItemCount[i].setText(String.valueOf(ListOfItems.get(index).getCount()));            
             }
+
+            showBill();
+
         
         }
 
-        else if(btn.getText() == "Next >" && !isEnd){
+        else if(btn.getText() == "Next >" && btn.getName() == "BillNavigation"){
+
+            if(!BillIsEnd){
+
+                BillPageNumber++;
+                BillPage.setText(String.valueOf(BillPageNumber));
+
+                showBill();
+
+            }
+
+        }
+
+        else if(btn.getText() == "Next >" && !itemsIsEnd){
 
             PageNumber++;
             CurrentPage.setText(String.valueOf(PageNumber));
-            InsertItems(PageNumber);
+            InsertItems();
+
+        }
+
+        else if(btn.getText() == "< Previous" && btn.getName() == "BillNavigation"){
+
+            if(BillPageNumber > 1){
+
+                BillPageNumber--;
+                BillPage.setText(String.valueOf(BillPageNumber));
+
+                showBill();
+
+            }
 
         }
 
@@ -353,9 +447,11 @@ public class StaffInterface extends Interface implements ActionListener{
 
             PageNumber--;
             CurrentPage.setText(String.valueOf(PageNumber));
-            InsertItems(PageNumber);
+            InsertItems();
 
         }
+
+
     }
 
 
