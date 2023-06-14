@@ -169,7 +169,7 @@ public class DiscountInterface extends Interface implements ActionListener{
                     String[] dataArray = data.split("\\|");
 
                     // insert into Dropdown
-                    if(dataArray != null){BundleDropdown.addItem(dataArray[1]);}
+                    if(dataArray != null){BundleDropdown.addItem(dataArray[1] + " and " + dataArray[2] + " for " + dataArray[3] + "%");}
 
                 }
                 
@@ -237,6 +237,17 @@ public class DiscountInterface extends Interface implements ActionListener{
             
             // error message
             else{errorMessage.setForeground(Color.red);errorMessage.setText("Error, card does not exist");}
+
+        }
+
+        else if(btn.getName() == "BundledDiscount"){
+
+            String[] dataArray = BundleDropdown.getSelectedItem().toString().split(" for ");
+            String[] discountAmount = dataArray[1].split("%");
+
+            dataArray = BundleDropdown.getSelectedItem().toString().split(" ");
+            staffInterface.setBundledDiscount(dataArray[0], dataArray[2], discountAmount[0]);
+            frame.dispose();
 
         }
 

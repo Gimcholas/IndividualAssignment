@@ -1,4 +1,5 @@
 package StaffInterfaces;
+import javax.sound.sampled.AudioFileFormat.Type;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -28,7 +29,7 @@ public class StaffInterface extends Interface implements ActionListener{
     JPanel ItemsPanel;
     JPanel ItemListPanel;
     List<Items> ListOfItems = new ArrayList<Items>();
-    JLabel NameText, PriceText, QuantityText;
+    JLabel NameText, PriceText, TypeText, QuantityText;
     JPanel TopPanel;
     JLabel[] ItemCount = new JLabel[GridRow-1];
     
@@ -61,6 +62,11 @@ public class StaffInterface extends Interface implements ActionListener{
 
     // Discounts
     JButton DiscountButton;
+    //Bundled Discount
+    String item1 = null,item2 = null;
+    int DiscountBuffer=0;
+    boolean containItem1 = false,containItem2 = false;
+
 
 
     public void MainMenu(){
@@ -92,14 +98,18 @@ public class StaffInterface extends Interface implements ActionListener{
         PriceText = new JLabel("Price:");
         PriceText.setHorizontalAlignment(JLabel.CENTER);
 
+        TypeText = new JLabel("Type:");
+        TypeText.setHorizontalAlignment(JLabel.CENTER);
+
         QuantityText = new JLabel("Stock:");
         QuantityText.setHorizontalAlignment(JLabel.CENTER);
 
         TopPanel = new JPanel(new GridLayout(1, 7));
         TopPanel.add(NameText);
         TopPanel.add(PriceText);
+        TopPanel.add(TypeText);
         TopPanel.add(QuantityText);
-        for (int i = 0; i < 4; i++) {TopPanel.add(new JLabel());}
+        for (int i = 0; i < 3; i++) {TopPanel.add(new JLabel());}
         TopPanel.setSize(700, (int)TopPanel.getPreferredSize().getHeight());
         TopPanel.setBackground(null);
 
@@ -295,7 +305,7 @@ public class StaffInterface extends Interface implements ActionListener{
         JPanel ItemEntry = new JPanel(new GridLayout(1, 7));
         
         // Sections of the Main entry
-        JLabel ItemName,ItemPrice,ItemQuantity, Seperation;
+        JLabel ItemName,ItemPrice,ItemType,ItemQuantity;
         JButton AddItem,SubtractItem;
 
         // Item name
@@ -310,15 +320,17 @@ public class StaffInterface extends Interface implements ActionListener{
         ItemPrice.setHorizontalAlignment(JLabel.CENTER);
         ItemEntry.add(ItemPrice);
 
+        // Seperation
+        ItemType = new JLabel(String.valueOf(ListOfItems.get(index).getType()));
+        ItemType.setName(String.valueOf("Quantity " + index));
+        ItemType.setHorizontalAlignment(JLabel.CENTER);
+        ItemEntry.add(ItemType);
+
         // Item Quantity
         ItemQuantity = new JLabel(String.valueOf(ListOfItems.get(index).getQuantity()));
         ItemQuantity.setName(String.valueOf("Quantity " + index));
         ItemQuantity.setHorizontalAlignment(JLabel.CENTER);
         ItemEntry.add(ItemQuantity);
-
-        // Seperation
-        Seperation = new JLabel();
-        ItemEntry.add(Seperation);
         
         // -
         SubtractItem = new JButton("-");
@@ -385,6 +397,10 @@ public class StaffInterface extends Interface implements ActionListener{
 
                 Price+=ListOfItems.get(i).getPrice() * ListOfItems.get(i).getCount();
 
+                // Bundled discount check
+                if(item1!= null && ListOfItems.get(i).getType().compareTo(item1) == 0){containItem1=true;}
+                if(item2 != null && ListOfItems.get(i).getType().compareTo(item2) == 0){containItem2=true;}
+
                 // compensate for page number and add Bill entry
                 if( itemTrack  >= (BillRows-AmountOfnotItems) * (BillPageNumber-1) && itemTrack < (BillRows-AmountOfnotItems) * (BillPageNumber)){
 
@@ -402,6 +418,13 @@ public class StaffInterface extends Interface implements ActionListener{
             }
 
         }
+
+        // check bundled discount
+        if(containItem1 && containItem2){DiscountAmount = DiscountBuffer;}
+        
+        else{DiscountAmount = 0;}
+
+
 
         // Add empty space after all items are shown, if have empty space means its end of page
         for (int i = 0; i < EmptySpace*BillColumns; i++) {
@@ -424,7 +447,10 @@ public class StaffInterface extends Interface implements ActionListener{
 
         BillPanel.add(new JLabel("Discount: "));
         BillPanel.add(new JLabel(String.valueOf(String.valueOf(DiscountAmount) + "%")));
-        for (int i = 0; i < BillColumns-2; i++) {BillPanel.add(new JLabel());}
+        BillPanel.add(new JLabel(item1));
+        BillPanel.add(new JLabel(item2));
+        for (int i = 0; i < BillColumns-4; i++) {BillPanel.add(new JLabel());}
+
 
         BillPanel.add(new JLabel("Net: "));
         BillPanel.add(new JLabel(String.valueOf(NetPayable)));
@@ -522,7 +548,9 @@ public class StaffInterface extends Interface implements ActionListener{
         else if(btn.getText() == "Checkout"){
             
             new Checkout(ListOfItems, String.valueOf(DiscountAmount), String.valueOf(BeforeDiscount), String.valueOf(NetPayable));
-            DiscountAmount=0;
+            DiscountBuffer=DiscountAmount=0;
+            item1=item2=null;
+            containItem1=containItem2=false;
             LoadItems();
 
         }
@@ -533,10 +561,26 @@ public class StaffInterface extends Interface implements ActionListener{
     }
 
     public void setDiscount(String DiscountAmount){
-        
+
+        // no condition required to apply discount
+        item1 = item2 = null;
+
+
         this.DiscountAmount = Integer.valueOf(DiscountAmount);
         showBill();
     
+    }
+
+    public void setBundledDiscount(String item1, String item2, String DiscountAmount){
+
+        // conditional applicable discount
+        this.item1 = item1;
+        this.item2 = item2;
+        this.DiscountBuffer = Integer.valueOf(DiscountAmount);
+        containItem1 = false;
+        containItem2 = false;
+        showBill();
+
     }
 
     public int getDiscount(){return DiscountAmount;}
