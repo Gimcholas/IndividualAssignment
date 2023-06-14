@@ -31,7 +31,7 @@ public class AddDiscount extends Interface implements ActionListener{
     public void MainMenu() {
         // Create JFrame
         frame = new JFrame();
-        frame.setTitle("AddStaff");
+        frame.setTitle("Add Discounts");
         frame.setSize(500,270);
 
 
@@ -97,8 +97,6 @@ public class AddDiscount extends Interface implements ActionListener{
     }
 
 
-    // create a list of items (includes their name price and type so we can add to Items Panel)
-    // Note: This is JUST THE CREATION !!! items does not get inserted into items panel YET
     private void LoadDropdown(){
 
         List<String> noDuplicate = new ArrayList<String>();
