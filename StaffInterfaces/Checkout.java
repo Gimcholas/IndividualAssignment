@@ -2,23 +2,20 @@ package StaffInterfaces;
 
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import Classes.Items;
-import MainInterface.Login;
 
 
 public class Checkout{
@@ -97,6 +94,9 @@ public class Checkout{
         frame.revalidate();
         frame.repaint();
 
+        // Record in BillHistory.md
+        addToBillHistory( ListOfItems, DiscountAmount, BeforeDiscount,  AfterDiscount);
+
     }
 
     private void deductStock(Items items,int deductAmount){
@@ -124,6 +124,30 @@ public class Checkout{
         
         catch (IOException e){System.out.println("Error, check file path");}
 
+    }
+
+    private void addToBillHistory(List<Items> ListOfItems,String DiscountAmount,String BeforeDiscount, String AfterDiscount){
+
+        // Create new entry container
+        String newEntry = "\n|";
+
+        for (Items items : ListOfItems) {
+
+            if(items.getCount() > 0){
+
+                newEntry += items.getName() + ":";
+                newEntry += String.valueOf(items.getCount()) + "-";
+
+            }
+            
+        }
+        newEntry += "__" + DiscountAmount + ":" + BeforeDiscount + ":" + AfterDiscount + "|";
+                    
+        // Add Staff
+        try {Files.write(Paths.get("C:\\Users\\End User\\Documents\\MMU Stuff\\java\\IndividualAssignment\\Database\\BillHistory.md"), newEntry.getBytes(), StandardOpenOption.APPEND);}            
+        
+        // Error
+        catch (IOException e) {System.out.println("Error, Check file path");}            
     }
 
 }
