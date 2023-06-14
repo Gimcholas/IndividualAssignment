@@ -4,8 +4,6 @@ import MainInterface.Login;
 
 public class MiniGrocery extends JFrame{
  
-    Login login;
-
     public MiniGrocery(){
 
         new Login().MainMenu();

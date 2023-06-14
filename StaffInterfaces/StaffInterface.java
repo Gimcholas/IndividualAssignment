@@ -42,9 +42,10 @@ public class StaffInterface extends Interface implements ActionListener{
     boolean itemsIsEnd = false;
 
     // Bills
-    JLabel BillPanelText;
+    JLabel BillText;
     JPanel BillPanel;
     int BillRows = 20;  // Must be MORE THAN 4 = 5 and above
+    int BillColumns = 4;
     JButton CheckOutButton;
     int DiscountAmount=0;
     double BeforeDiscount;
@@ -53,7 +54,6 @@ public class StaffInterface extends Interface implements ActionListener{
     // Bill Navigation
     JButton NextBillPage, PreviouBillPage;
     JLabel BillPage;
-    JPanel BillNavigation;
     int BillPageNumber = 1; // Do not touch
     boolean BillIsEnd = false;
 
@@ -90,7 +90,7 @@ public class StaffInterface extends Interface implements ActionListener{
         PriceText = new JLabel("Price:");
         PriceText.setHorizontalAlignment(JLabel.CENTER);
 
-        QuantityText = new JLabel("Quantity");
+        QuantityText = new JLabel("Stock:");
         QuantityText.setHorizontalAlignment(JLabel.CENTER);
 
         TopPanel = new JPanel(new GridLayout(1, 7));
@@ -138,7 +138,6 @@ public class StaffInterface extends Interface implements ActionListener{
         NavigationPanel.setBounds(400, 725, 300, 75);
         NavigationPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         NavigationPanel.setBackground(Color.GRAY);
-        NavigationPanel.add(CheckOutButton);
         NavigationPanel.add(PreviousPage);
         NavigationPanel.add(CurrentPage);
         NavigationPanel.add(NextPage);
@@ -152,14 +151,14 @@ public class StaffInterface extends Interface implements ActionListener{
 
         // Bill Panel
         BillPanel = new JPanel(new GridLayout(BillRows, 1));
-        BillPanel.setBounds(700, 0, 300, 770);
+        BillPanel.setBounds(700, 0, 290, 770);
         BillPanel.setBackground(Color.LIGHT_GRAY);
         frame.add(BillPanel);
 
         // Bill Text
-        BillPanelText = new JLabel("Bill:");
-        BillPanelText.setFont(new Font(BillPanelText.getName(), Font.PLAIN, 30)); // Set font
-        BillPanelText.setHorizontalAlignment(JLabel.CENTER);
+        BillText = new JLabel("Bill:");
+        BillText.setFont(new Font(BillText.getName(), Font.PLAIN, 30)); // Set font
+        BillText.setHorizontalAlignment(JLabel.CENTER);
 
         // Before discount
         BeforeDiscount = 0;
@@ -169,11 +168,11 @@ public class StaffInterface extends Interface implements ActionListener{
 
 
         // Bill Navigation
-        NextBillPage = new JButton("Next >");
+        NextBillPage = new JButton(">");
         NextBillPage.setName("BillNavigation");
         NextBillPage.addActionListener(this);
-        BillPage = new JLabel(String.valueOf(BillPageNumber));
-        PreviouBillPage = new JButton("< Previous");
+        BillPage = new JLabel(String.valueOf(BillPageNumber),JLabel.CENTER);
+        PreviouBillPage = new JButton("<");
         PreviouBillPage.setName("BillNavigation");
         PreviouBillPage.addActionListener(this);
 
@@ -181,13 +180,7 @@ public class StaffInterface extends Interface implements ActionListener{
         DiscountButton = new JButton("Discount");
         DiscountButton.addActionListener(this);
 
-        // Compile Bill Navigation panel
-        BillNavigation = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        BillNavigation.setBackground(null);
-        BillNavigation.add(PreviouBillPage);
-        BillNavigation.add(BillPage);
-        BillNavigation.add(NextBillPage);
-        BillNavigation.add(DiscountButton);
+
 
         showBill();
         
@@ -353,7 +346,7 @@ public class StaffInterface extends Interface implements ActionListener{
     private void showBill(){
 
         // not items (to compensate for text and stuff)
-        int AmountOfnotItems = 5;
+        int AmountOfnotItems = 6;
 
 
         // Reset Bill is end
@@ -365,7 +358,13 @@ public class StaffInterface extends Interface implements ActionListener{
         // Setup Bill panel
         BillPanel.removeAll();
 
-        BillPanel.add(BillPanelText);
+        BillPanel.add(BillText);
+        for (int i = 0; i < BillColumns-1; i++) {BillPanel.add(new JLabel());}
+
+        BillPanel.add(new JLabel("Item",JLabel.CENTER));
+        BillPanel.add(new JLabel("Quantity",JLabel.CENTER));
+        BillPanel.add(new JLabel("Price",JLabel.CENTER));
+        BillPanel.add(new JLabel("Total",JLabel.CENTER));
 
         // empty space
         int EmptySpace = BillRows - AmountOfnotItems;
@@ -383,7 +382,11 @@ public class StaffInterface extends Interface implements ActionListener{
                 // compensate for page number and add Bill entry
                 if( itemTrack  >= (BillRows-AmountOfnotItems) * (BillPageNumber-1) && itemTrack < (BillRows-AmountOfnotItems) * (BillPageNumber)){
 
-                    BillPanel.add(new JLabel(ListOfItems.get(i).getName() + ":" + ListOfItems.get(i).getCount()));
+                    BillPanel.add(new JLabel(ListOfItems.get(i).getName(),JLabel.CENTER));
+                    BillPanel.add(new JLabel(String.valueOf(ListOfItems.get(i).getCount()),JLabel.CENTER));
+                    BillPanel.add(new JLabel(String.valueOf(ListOfItems.get(i).getPrice()),JLabel.CENTER));
+                    BillPanel.add(new JLabel(String.valueOf(ListOfItems.get(i).getCount() * ListOfItems.get(i).getPrice()),JLabel.CENTER));
+
                     EmptySpace--;
 
                 }
@@ -395,7 +398,12 @@ public class StaffInterface extends Interface implements ActionListener{
         }
 
         // Add empty space after all items are shown, if have empty space means its end of page
-        for (int i = 0; i < EmptySpace; i++) {BillPanel.add(new JLabel()); BillIsEnd = true;}
+        for (int i = 0; i < EmptySpace*BillColumns; i++) {
+
+            BillPanel.add(new JLabel());
+            BillIsEnd = true;
+        
+        }
 
         // calculate discount amount in 0.%% format
         double discountDouble = 100 - DiscountAmount;
@@ -404,10 +412,24 @@ public class StaffInterface extends Interface implements ActionListener{
         BeforeDiscount = Price;
         NetPayable = Price * discountDouble;
 
-        BillPanel.add(new JLabel ("Before Discount: " + BeforeDiscount));
-        BillPanel.add(new JLabel("Discount: " + DiscountAmount + "%"));
-        BillPanel.add(new JLabel("Net Payable: " + NetPayable));
-        BillPanel.add(BillNavigation);
+        BillPanel.add(new JLabel ("Before: "));
+        BillPanel.add(new JLabel(String.valueOf(BeforeDiscount)));
+        for (int i = 0; i < BillColumns-2; i++) {BillPanel.add(new JLabel());}
+
+        BillPanel.add(new JLabel("Discount: "));
+        BillPanel.add(new JLabel(String.valueOf(String.valueOf(DiscountAmount) + "%")));
+        for (int i = 0; i < BillColumns-2; i++) {BillPanel.add(new JLabel());}
+
+        BillPanel.add(new JLabel("Net: "));
+        BillPanel.add(new JLabel(String.valueOf(NetPayable)));
+        for (int i = 0; i < BillColumns-3; i++) {BillPanel.add(new JLabel());}
+        BillPanel.add(DiscountButton);
+
+        BillPanel.add(PreviouBillPage);
+        BillPanel.add(BillPage);
+        BillPanel.add(NextBillPage);
+        BillPanel.add(CheckOutButton);
+        for (int i = 0; i < BillColumns-4; i++) {BillPanel.add(new JLabel());}
 
 
         //https://stackoverflow.com/a/10367754/15149509
@@ -451,7 +473,7 @@ public class StaffInterface extends Interface implements ActionListener{
 
         }
 
-        else if(btn.getText() == "Next >" && btn.getName() == "BillNavigation"){
+        else if(btn.getText() == ">"){
 
             if(!BillIsEnd){
 
@@ -469,7 +491,7 @@ public class StaffInterface extends Interface implements ActionListener{
 
         }
 
-        else if(btn.getText() == "< Previous" && btn.getName() == "BillNavigation"){
+        else if(btn.getText() == "<"){
 
             if(BillPageNumber > 1){
 
