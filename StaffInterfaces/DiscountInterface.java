@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 import javax.swing.JButton;
@@ -21,18 +23,18 @@ public class DiscountInterface extends Interface implements ActionListener{
 
     // Pick discount type
     JButton confirmButton;
-    JComboBox DiscountTypeDropdown;
+    JComboBox<String> DiscountTypeDropdown;
     String[] DiscountType = {"Royalty Discount ","Bundled discount "};
 
     // Royalty discount
     JTextField RoyaltyNumberText;
     JPanel DiscountPanel;
-    JComboBox RoyaltyDropdown;
+    JComboBox<String> RoyaltyDropdown;
     String[] RoyaltyType = {"3","5","10"};
 
 
     // Bundled Discount
-    JComboBox BundleDropdown;
+    JComboBox<String> BundleDropdown;
 
     // Notification errorMessage
     JPanel errorPanel;
@@ -146,7 +148,11 @@ public class DiscountInterface extends Interface implements ActionListener{
         // Read from file
         //https://www.w3schools.com/java/java_files_read.asp
         try{
-            File myObj = new File("C:\\Users\\End User\\Documents\\MMU Stuff\\java\\IndividualAssignment\\Database\\Discounts.md");
+            String s = System.getProperty("user.dir");
+            Path currentRelativePath = Paths.get(s);
+            s = currentRelativePath.toString()+"\\Database\\Discounts.md";
+
+            File myObj = new File(s);
             Scanner myReader = new Scanner(myObj);
 
             // First two lines are garbage

@@ -13,6 +13,8 @@ import java.util.List;
 import java.awt.event.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -202,7 +204,11 @@ public class StaffInterface extends Interface implements ActionListener{
         // Read from file
         //https://www.w3schools.com/java/java_files_read.asp
         try{
-            File myObj = new File("C:\\Users\\End User\\Documents\\MMU Stuff\\java\\IndividualAssignment\\Database\\Items.md");
+            String s = System.getProperty("user.dir");
+            Path currentRelativePath = Paths.get(s);
+            s = currentRelativePath.toString()+"\\Database\\Items.md";
+
+            File myObj = new File(s);
             Scanner myReader = new Scanner(myObj);
 
             // First two lines are garbage

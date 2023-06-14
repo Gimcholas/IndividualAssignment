@@ -2,6 +2,7 @@ package AdminInterfaces;
 import java.awt.event.*;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
@@ -65,7 +66,11 @@ public class AddStaff extends Interface implements ActionListener{
             // Compile new entry
             String newEntry = "\n|" + (String)StaffTypeDropdown.getSelectedItem() + "|" + Name.getText() + "| |";            
             // Add Staff
-            try {Files.write(Paths.get("C:\\Users\\End User\\Documents\\MMU Stuff\\java\\IndividualAssignment\\Database\\Accounts.md"), newEntry.getBytes(), StandardOpenOption.APPEND);}            
+            String s = System.getProperty("user.dir");
+            Path currentRelativePath = Paths.get(s);
+            s = currentRelativePath.toString()+"\\Database\\Accounts.md";
+
+            try {Files.write(Paths.get(s), newEntry.getBytes(), StandardOpenOption.APPEND);}            
             // Error
             catch (IOException e) {System.out.println("Error, Check file path");}            
             new AdminInterface().MainMenu();

@@ -22,7 +22,11 @@ public class RoyaltyCardScanner extends RoyaltyCard{
         // Read from file
         //https://www.w3schools.com/java/java_files_read.asp
         try{
-            File myObj = new File("C:\\Users\\End User\\Documents\\MMU Stuff\\java\\IndividualAssignment\\Database\\RoyaltyCard.md");
+            String s = System.getProperty("user.dir");
+            Path currentRelativePath = Paths.get(s);
+            s = currentRelativePath.toString()+"\\Database\\RoyaltyCard.md";
+
+            File myObj = new File(s);
             Scanner myReader = new Scanner(myObj);
 
             // First two lines are garbage
@@ -62,7 +66,11 @@ public class RoyaltyCardScanner extends RoyaltyCard{
     private void setPoints(String RoyaltyCardNumber, String OldPoints, String DeductionAmount){
 
         try{
-            Path FILE_PATH = Paths.get("C:\\Users\\End User\\Documents\\MMU Stuff\\java\\IndividualAssignment\\Database\\RoyaltyCard.md");
+            String s = System.getProperty("user.dir");
+            Path currentRelativePath = Paths.get(s);
+            s = currentRelativePath.toString()+"\\Database\\RoyaltyCard.md";
+            
+            Path FILE_PATH = Paths.get(s);
 
             List<String> fileContent = new ArrayList<>(Files.readAllLines(FILE_PATH, StandardCharsets.UTF_8));
 

@@ -2,6 +2,7 @@ package StaffInterfaces;
 
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -102,7 +103,11 @@ public class Checkout{
     private void deductStock(Items items,int deductAmount){
 
         try{
-            Path FILE_PATH = Paths.get("C:\\Users\\End User\\Documents\\MMU Stuff\\java\\IndividualAssignment\\Database\\Items.md");
+            String s = System.getProperty("user.dir");
+            Path currentRelativePath = Paths.get(s);
+            s = currentRelativePath.toString()+"\\Database\\Items.md";
+
+            Path FILE_PATH = Paths.get(s);
 
             List<String> fileContent = new ArrayList<>(Files.readAllLines(FILE_PATH, StandardCharsets.UTF_8));
 
@@ -144,7 +149,11 @@ public class Checkout{
         newEntry += "__" + DiscountAmount + ":" + BeforeDiscount + ":" + AfterDiscount + "|";
                     
         // Add Staff
-        try {Files.write(Paths.get("C:\\Users\\End User\\Documents\\MMU Stuff\\java\\IndividualAssignment\\Database\\BillHistory.md"), newEntry.getBytes(), StandardOpenOption.APPEND);}            
+            String s = System.getProperty("user.dir");
+            Path currentRelativePath = Paths.get(s);
+            s = currentRelativePath.toString()+"\\Database\\BillHistory.md";
+
+        try {Files.write(Paths.get(s), newEntry.getBytes(), StandardOpenOption.APPEND);}            
         
         // Error
         catch (IOException e) {System.out.println("Error, Check file path");}            

@@ -7,6 +7,7 @@ import javax.swing.JTextField;
 import Classes.Interface;
 
 import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -75,7 +76,11 @@ public class SetPassword extends Interface implements ActionListener{
     private void ResetPassword(){
 
         try{
-            Path FILE_PATH = Paths.get("C:\\Users\\End User\\Documents\\MMU Stuff\\java\\IndividualAssignment\\Database\\Accounts.md");
+            String s = System.getProperty("user.dir");
+            Path currentRelativePath = Paths.get(s);
+            s = currentRelativePath.toString()+"\\Database\\Accounts.md";
+
+            Path FILE_PATH = Paths.get(s);
 
             List<String> fileContent = new ArrayList<>(Files.readAllLines(FILE_PATH, StandardCharsets.UTF_8));
 
