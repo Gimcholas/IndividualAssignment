@@ -168,7 +168,7 @@ public class DiscountInterface extends Interface implements ActionListener{
                     //https://stackoverflow.com/a/7935873/15149509
                     String[] dataArray = data.split("\\|");
 
-                    // insert into Items list
+                    // insert into Dropdown
                     if(dataArray != null){BundleDropdown.addItem(dataArray[1]);}
 
                 }

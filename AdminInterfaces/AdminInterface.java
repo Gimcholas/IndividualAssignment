@@ -66,12 +66,10 @@ public class AdminInterface extends Interface implements ActionListener{
         
         // Change interface
         if(btn.getText() == "Add Staff"){new AddStaff().MainMenu();}
-        else if(btn.getText() == "Add Discount"){new AddDiscount().MainMenu();}
+        else if(btn.getText() == "Add Discounts"){new AddDiscount().MainMenu();}
         else if(btn.getText() == "Add Items"){new AddItems().MainMenu();}
-        else if(btn.getText() == "Logout"){new Login().MainMenu();}
+        else if(btn.getText() == "Logout"){new Login().MainMenu();frame.dispose();}
         else{System.out.println("Error, button not assigned an interface");}
-
-        frame.dispose();
 
     }
 

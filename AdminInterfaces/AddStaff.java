@@ -18,7 +18,7 @@ public class AddStaff extends Interface implements ActionListener{
     JLabel Notification;
     JTextField Name;
     JLabel TextName;
-    JComboBox StaffTypeDropdown;
+    JComboBox<String> StaffTypeDropdown;
     String[] StaffType = {"Admin","Staff"};
     JButton Create;
 
@@ -56,7 +56,7 @@ public class AddStaff extends Interface implements ActionListener{
 
         frame.setLocationRelativeTo(null);
         frame.setLayout(null);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
 	}
 
@@ -73,7 +73,6 @@ public class AddStaff extends Interface implements ActionListener{
             try {Files.write(Paths.get(s), newEntry.getBytes(), StandardOpenOption.APPEND);}            
             // Error
             catch (IOException e) {System.out.println("Error, Check file path");}            
-            new AdminInterface().MainMenu();
             frame.dispose();
         }
 		else{Notification.setText("Please provide a valid names");}

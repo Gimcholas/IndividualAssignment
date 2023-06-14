@@ -148,7 +148,6 @@ public class Checkout{
         }
         newEntry += "__" + DiscountAmount + ":" + BeforeDiscount + ":" + AfterDiscount + "|";
                     
-        // Add Staff
             String s = System.getProperty("user.dir");
             Path currentRelativePath = Paths.get(s);
             s = currentRelativePath.toString()+"\\Database\\BillHistory.md";
