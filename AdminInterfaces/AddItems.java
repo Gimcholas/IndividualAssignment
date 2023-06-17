@@ -2,16 +2,8 @@ package AdminInterfaces;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -21,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import Classes.Interface;
+import Database.Database;
 
 public class AddItems extends Interface implements ActionListener{
 
@@ -84,7 +77,7 @@ public class AddItems extends Interface implements ActionListener{
         TypeDropdown.setBounds(180, 210, 150, 30);
         MainPanel.add(TypeDropdown);
 
-        LoadDropdown();
+        new Database().LoadDropdown(TypeDropdown,noDuplicateName);
 
         // Add Create button
         Create = new JButton("Create");
@@ -101,13 +94,19 @@ public class AddItems extends Interface implements ActionListener{
     public void actionPerformed(ActionEvent evt){
 
         // Get new type and set new entry
-        if(!noDuplicateName.contains(NewItem.getText()) && NewType != null && Create.getText() == "Create new Type"){addItem(buffer + NewType.getText() + "|");}
+        if(!noDuplicateName.contains(NewItem.getText()) && NewType != null && Create.getText() == "Create new Type"){
+            new Database().addItem(buffer + NewType.getText() + "|");
+            frame.dispose();
+        }
 
-        // Check if item already exist and compile new entry
-        else if(!noDuplicateName.contains(NewItem.getText()) && NewType != null){addItem("\n|" + NewItem.getText() + "|" + NewPrice.getText() + "|" + NewQuantity.getText() + "|" + TypeDropdown.getSelectedItem() + "|");}
-        
         // Check if new type
         else if(!noDuplicateName.contains(NewItem.getText()) && TypeDropdown.getSelectedItem() == "New Type"){getNewType("\n|" + NewItem.getText() + "|" + NewPrice.getText() + "|" + NewQuantity.getText() + "|");}
+
+        // Check if item already exist and compile new entry
+        else if(!noDuplicateName.contains(NewItem.getText())){
+            new Database().addItem("\n|" + NewItem.getText() + "|" + NewPrice.getText() + "|" + NewQuantity.getText() + "|" + TypeDropdown.getSelectedItem() + "|");
+            frame.dispose();
+        }
 
         // item already exist
         else{System.out.println("Item Already Exist");}
@@ -139,80 +138,6 @@ public class AddItems extends Interface implements ActionListener{
         MainPanel.revalidate();
         MainPanel.repaint();
 
-    }
-
-    private void addItem(String newEntry){
-
-        String s = System.getProperty("user.dir");
-        Path currentRelativePath = Paths.get(s);
-        s = currentRelativePath.toString()+"\\Database\\Items.md";
-
-        try {Files.write(Paths.get(s), newEntry.getBytes(), StandardOpenOption.APPEND);}            
-
-        // Error
-        catch (IOException e) {System.out.println("Error, Check file path");}
-        frame.dispose();
-
-    }
-
-    private void LoadDropdown(){
-
-        List<String> noDuplicateType = new ArrayList<String>();
-
-
-        TypeDropdown.addItem("New Type");
-
-        // Read from file
-        //https://www.w3schools.com/java/java_files_read.asp
-        try{
-            String s = System.getProperty("user.dir");
-            Path currentRelativePath = Paths.get(s);
-            s = currentRelativePath.toString()+"\\Database\\Items.md";
-
-            File myObj = new File(s);
-            Scanner myReader = new Scanner(myObj);
-
-            // First two lines are garbage
-            int skipFirstTwoLines = 0;
-
-            // Read line by line
-            while (myReader.hasNextLine()) {
-                String data = myReader.nextLine();
-
-                // Skip first two lines
-                if(skipFirstTwoLines >= 2){
-
-                    //https://stackoverflow.com/a/7935873/15149509
-                    String[] dataArray = data.split("\\|");
-
-                    // insert into Dropdown and update noDuplicateType list
-                    
-                    if(dataArray != null && !noDuplicateType.contains(dataArray[4])){
-                        TypeDropdown.addItem(dataArray[4]);
-                        noDuplicateType.add(dataArray[4]);
-                        noDuplicateName.add(dataArray[1]);
-                    }
-
-                }
-                
-                skipFirstTwoLines ++;
-            }
-
-            myReader.close();
-
-
-        }
-        
-        // error
-        catch (FileNotFoundException e){
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-
-    }
-
-    public static void main(String[] args) {
-        new AddItems().MainMenu();   
     }
 
 }

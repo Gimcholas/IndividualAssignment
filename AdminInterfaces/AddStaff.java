@@ -1,10 +1,5 @@
 package AdminInterfaces;
 import java.awt.event.*;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -13,6 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import Classes.Interface;
+import Database.Database;
 
 public class AddStaff extends Interface implements ActionListener{
     JLabel Notification;
@@ -65,14 +61,7 @@ public class AddStaff extends Interface implements ActionListener{
         if(Name.getText() != null){
             // Compile new entry
             String newEntry = "\n|" + (String)StaffTypeDropdown.getSelectedItem() + "|" + Name.getText() + "| |";            
-            // Add Staff
-            String s = System.getProperty("user.dir");
-            Path currentRelativePath = Paths.get(s);
-            s = currentRelativePath.toString()+"\\Database\\Accounts.md";
-
-            try {Files.write(Paths.get(s), newEntry.getBytes(), StandardOpenOption.APPEND);}            
-            // Error
-            catch (IOException e) {System.out.println("Error, Check file path");}            
+            new Database().addStaff(newEntry);
             frame.dispose();
         }
 		else{Notification.setText("Please provide a valid names");}

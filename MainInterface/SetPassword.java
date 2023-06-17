@@ -2,24 +2,17 @@ package MainInterface;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
+import javax.swing.JPasswordField;
 
 import Classes.Interface;
+import Database.Database;
 
 import java.awt.event.*;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class SetPassword extends Interface implements ActionListener{
 
     JLabel TextPassword;
-    JTextField NewPassword;
+    JPasswordField NewPassword;
     JLabel Notification;
     JButton SetPassword;
 
@@ -41,7 +34,7 @@ public class SetPassword extends Interface implements ActionListener{
         frame.add(TextPassword);
 
         // Add text field to get new password
-        NewPassword = new JTextField();
+        NewPassword = new JPasswordField();
         NewPassword.setBounds(200, 50, 150, 30);
         frame.add(NewPassword);
 
@@ -61,46 +54,16 @@ public class SetPassword extends Interface implements ActionListener{
     public void actionPerformed(ActionEvent evt){
 
         // Error checking password
-        if(NewPassword.getText() == null || NewPassword.getText().isBlank()){
+        if(String.valueOf(NewPassword.getPassword()) == null || String.valueOf(NewPassword.getPassword()).isBlank()){
             Notification.setText("Password can't be empty");
             NewPassword.setText("");
         }
 
         // If valid password
-        else{ResetPassword();}
+        else{new Database().ResetPassword(Role,Name,String.valueOf(NewPassword.getPassword()));}
 
     }
 
-    //https://stackoverflow.com/a/37624091/15149509
-    private void ResetPassword(){
 
-        try{
-            String s = System.getProperty("user.dir");
-            Path currentRelativePath = Paths.get(s);
-            s = currentRelativePath.toString()+"\\Database\\Accounts.md";
-
-            Path FILE_PATH = Paths.get(s);
-
-            List<String> fileContent = new ArrayList<>(Files.readAllLines(FILE_PATH, StandardCharsets.UTF_8));
-
-            String oldEntry = "|" + Role + "|" + Name + "| |";
-            String newEntry = "|" + Role + "|" + Name + "|" + NewPassword.getText() + "|";
-
-            for (int i = 0; i < fileContent.size(); i++) {
-                if (fileContent.get(i).equals(oldEntry)) {
-                    fileContent.set(i, newEntry);
-                    break;
-                }
-            }
-
-            Files.write(FILE_PATH, fileContent, StandardCharsets.UTF_8);
-            new Login().MainMenu();
-            frame.dispose();
-
-        }
-        
-        catch (IOException e){System.out.println("Error, check file path");}
-
-    }
 
 }
