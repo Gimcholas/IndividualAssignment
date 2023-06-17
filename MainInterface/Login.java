@@ -5,14 +5,10 @@ import javax.swing.*;
 import AdminInterfaces.AdminInterface;
 import Classes.Account;
 import Classes.Interface;
+import Database.Database;
 import StaffInterfaces.StaffInterface;
 
 import java.util.*;  
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class Login extends Interface implements ActionListener{
     
@@ -23,7 +19,7 @@ public class Login extends Interface implements ActionListener{
     JLabel TextPassword;
     JButton Login;
 
-    List<Account> accounts = new ArrayList<Account>(); 
+    List<Account> accounts = new Database().getAccounts(); 
 
     public void MainMenu(){
 
@@ -70,53 +66,6 @@ public class Login extends Interface implements ActionListener{
 
     }
 
-    // create a list of accounts (includes their name password and roles so we can do checking for login)
-    private void LoadAccounts(){
-        
-        // Read from file
-        //https://www.w3schools.com/java/java_files_read.asp
-        try{
-
-
-            String s = System.getProperty("user.dir");
-            Path currentRelativePath = Paths.get(s);
-            s = currentRelativePath.toString()+"\\Database\\Accounts.md";
-
-            File myObj = new File(s);
-            Scanner myReader = new Scanner(myObj);
-
-            // First two lines are garbage
-            int skipFirstTwoLines = 0;
-
-            // Read line by line
-            while (myReader.hasNextLine()) {
-                String data = myReader.nextLine();
-
-                // Skip first two lines
-                if(skipFirstTwoLines >= 2){
-
-                    //https://stackoverflow.com/a/7935873/15149509
-                    String[] dataArray = data.split("\\|");
-
-                    // insert into account list
-                    if(dataArray != null){this.accounts.add(new Account(dataArray[1],dataArray[2],dataArray[3]));}
-
-                }
-                
-                skipFirstTwoLines ++;
-            }
-
-            myReader.close();
-        }
-        
-        // error
-        catch (FileNotFoundException e){
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-
-    }
-
     // Check for the existance of the account, and return its type
     private int CheckAccount(String Name, String Password){
 
@@ -140,7 +89,7 @@ public class Login extends Interface implements ActionListener{
     // if Login button is clicked
     public void actionPerformed(ActionEvent e){
 
-        LoadAccounts();
+        accounts = new Database().getAccounts();
 
         // If Account is Admin
         if (CheckAccount(Name.getText(), String.valueOf(Password.getPassword())) == 1){

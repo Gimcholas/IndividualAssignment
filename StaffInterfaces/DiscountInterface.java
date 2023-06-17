@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import Classes.Interface;
-import MainInterface.*;
+import Database.Database;
 
 public class DiscountInterface extends Interface implements ActionListener{
 
@@ -42,9 +42,6 @@ public class DiscountInterface extends Interface implements ActionListener{
 
     // Cancel button
     JButton cancelButton;
-
-    // Global Royalty Card Scanner
-    RoyaltyCardScanner royaltyCardScanner = new RoyaltyCardScanner();
 
     // Reference to set discount
     StaffInterface staffInterface;
@@ -179,7 +176,7 @@ public class DiscountInterface extends Interface implements ActionListener{
             myReader.close();
 
         }
-        
+
         // error
         catch (FileNotFoundException e){
             System.out.println("An error occurred.");
@@ -203,7 +200,7 @@ public class DiscountInterface extends Interface implements ActionListener{
         RoyaltyDropdown = new JComboBox<>(RoyaltyType);
         DiscountPanel.add(RoyaltyDropdown);
 
-        DiscountPanel.add(new JLabel("Current points: " + royaltyCardScanner.getPoints(RoyaltyCardNumber)));
+        DiscountPanel.add(new JLabel("Current points: " + new Database().getPoints(RoyaltyCardNumber)));
 
         // Confirm button
         confirmButton.setName("Select Discount Amount");
@@ -229,7 +226,7 @@ public class DiscountInterface extends Interface implements ActionListener{
         else if(btn.getText() == "Confirm" && btn.getName() == "RoyaltyDiscount"){
 
             // Check card existance
-            if(royaltyCardScanner.cardExist(RoyaltyNumberText.getText())){
+            if(new Database().cardExist(RoyaltyNumberText.getText())){
 
                 SelectRoyaltyDiscountAmount(RoyaltyNumberText.getText());
             
@@ -254,7 +251,7 @@ public class DiscountInterface extends Interface implements ActionListener{
         else if(btn.getText() == "Confirm" && btn.getName() == "Select Discount Amount"){
 
             // try to deduct from card
-            if(royaltyCardScanner.scanRoyaltyCard(RoyaltyNumberText.getText(),(String)RoyaltyDropdown.getSelectedItem())){
+            if(new Database().scanRoyaltyCard(RoyaltyNumberText.getText(),(String)RoyaltyDropdown.getSelectedItem())){
                 staffInterface.setDiscount((String)RoyaltyDropdown.getSelectedItem());
                 frame.dispose();
             }

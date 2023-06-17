@@ -1,4 +1,4 @@
-package StaffInterfaces;
+package Database;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,14 +11,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+import Classes.RoyaltyCard;
+
 public class RoyaltyCardScanner extends RoyaltyCard{
 
     private HashMap<String,RoyaltyCard> ListOfRoyaltyHashMap = new HashMap<String, RoyaltyCard>();
 
-    RoyaltyCardScanner(){loadCards();}
+    RoyaltyCardScanner(){LoadCards();}
 
     // Loads card into HashMap
-    private void loadCards(){
+    private void LoadCards(){
         // Read from file
         //https://www.w3schools.com/java/java_files_read.asp
         try{
@@ -63,7 +65,7 @@ public class RoyaltyCardScanner extends RoyaltyCard{
     }
 
     //https://stackoverflow.com/a/37624091/15149509
-    private void setPoints(String RoyaltyCardNumber, String OldPoints, String DeductionAmount){
+    protected void setPoints(String RoyaltyCardNumber, String OldPoints, String DeductionAmount){
 
         try{
             String s = System.getProperty("user.dir");
@@ -93,9 +95,9 @@ public class RoyaltyCardScanner extends RoyaltyCard{
     }
 
     // Handles everything from existence of card and points checking to deduction of points
-    public boolean scanRoyaltyCard(String RoyaltyCardNumber, String DeductionAmount){
+    protected boolean scanRoyaltyCard(String RoyaltyCardNumber, String DeductionAmount){
 
-        loadCards();
+        LoadCards();
 
         // if Card exist, then check if there is sufficient points to deduct
         if(ListOfRoyaltyHashMap.containsKey(RoyaltyCardNumber) && ListOfRoyaltyHashMap.get(RoyaltyCardNumber).checkPoints(Integer.valueOf(DeductionAmount))){
@@ -109,9 +111,9 @@ public class RoyaltyCardScanner extends RoyaltyCard{
 
     }
 
-    public String getPoints(String RoyaltyCardNumber){return ListOfRoyaltyHashMap.get(RoyaltyCardNumber).getPoints();}
+    protected String getPoints(String RoyaltyCardNumber){return ListOfRoyaltyHashMap.get(RoyaltyCardNumber).getPoints();}
 
-    public boolean cardExist(String RoyaltyCardNumber){
+    protected boolean cardExist(String RoyaltyCardNumber){
 
         return ListOfRoyaltyHashMap.containsKey(RoyaltyCardNumber);
     

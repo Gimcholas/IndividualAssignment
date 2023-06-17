@@ -1,5 +1,4 @@
 package StaffInterfaces;
-import javax.sound.sampled.AudioFileFormat.Type;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -8,16 +7,11 @@ import javax.swing.JTextField;
 
 import Classes.Interface;
 import Classes.Items;
+import Database.Database;
 
 import java.awt.*;
 import java.util.List;
 import java.awt.event.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Scanner;
 
 
 public class StaffInterface extends Interface implements ActionListener{
@@ -28,7 +22,7 @@ public class StaffInterface extends Interface implements ActionListener{
     JLabel ItemsPanelText;
     JPanel ItemsPanel;
     JPanel ItemListPanel;
-    List<Items> ListOfItems = new ArrayList<Items>();
+    List<Items> ListOfItems = new Database().getListOfItems();
     JLabel NameText, PriceText, TypeText, QuantityText;
     JPanel TopPanel;
     JLabel[] ItemCount = new JLabel[GridRow-1];
@@ -158,7 +152,7 @@ public class StaffInterface extends Interface implements ActionListener{
 
 
         // Items Insertion
-        LoadItems();
+        ListOfItems = new Database().getListOfItems();
         InsertItems();
 
         // Bill Panel
@@ -202,56 +196,6 @@ public class StaffInterface extends Interface implements ActionListener{
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-    }
-
-
-    // create a list of items (includes their name price and type so we can add to Items Panel)
-    // Note: This is JUST THE CREATION !!! items does not get inserted into items panel YET
-    private void LoadItems(){
-
-        ListOfItems.clear();
-        
-        // Read from file
-        //https://www.w3schools.com/java/java_files_read.asp
-        try{
-            String s = System.getProperty("user.dir");
-            Path currentRelativePath = Paths.get(s);
-            s = currentRelativePath.toString()+"\\Database\\Items.md";
-
-            File myObj = new File(s);
-            Scanner myReader = new Scanner(myObj);
-
-            // First two lines are garbage
-            int skipFirstTwoLines = 0;
-
-            // Read line by line
-            while (myReader.hasNextLine()) {
-                String data = myReader.nextLine();
-
-                // Skip first two lines
-                if(skipFirstTwoLines >= 2){
-
-                    //https://stackoverflow.com/a/7935873/15149509
-                    String[] dataArray = data.split("\\|");
-
-                    // insert into Items list
-                    if(dataArray != null){this.ListOfItems.add(new Items(dataArray[1],Double.valueOf(dataArray[2]),Integer.valueOf(dataArray[3]),dataArray[4]));}
-
-                }
-                
-                skipFirstTwoLines ++;
-            }
-
-            myReader.close();
-
-        }
-        
-        // error
-        catch (FileNotFoundException e){
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-
     }
 
 
@@ -390,6 +334,9 @@ public class StaffInterface extends Interface implements ActionListener{
         // track amount of items on bill
         int itemTrack = 0;
 
+        // reset
+        containItem1 = containItem2 = false;
+        
         // Add added items entry
         for (int i = 0; i < ListOfItems.size() ; i++) {
 
@@ -420,11 +367,13 @@ public class StaffInterface extends Interface implements ActionListener{
         }
 
         // check bundled discount
-        if(containItem1 && containItem2){DiscountAmount = DiscountBuffer;}
-        
-        else{DiscountAmount = 0;}
+        if( item1 != null){
 
+            if(containItem1 && containItem2){DiscountAmount = DiscountBuffer;}
+            
+            else{DiscountAmount = 0;}
 
+        }
 
         // Add empty space after all items are shown, if have empty space means its end of page
         for (int i = 0; i < EmptySpace*BillColumns; i++) {
@@ -551,7 +500,7 @@ public class StaffInterface extends Interface implements ActionListener{
             DiscountBuffer=DiscountAmount=0;
             item1=item2=null;
             containItem1=containItem2=false;
-            LoadItems();
+            ListOfItems = new Database().getListOfItems();
 
         }
 
@@ -560,16 +509,20 @@ public class StaffInterface extends Interface implements ActionListener{
 
     }
 
+
+    // Define all types of discounts here
+
     public void setDiscount(String DiscountAmount){
 
         // no condition required to apply discount
         item1 = item2 = null;
-
+        
 
         this.DiscountAmount = Integer.valueOf(DiscountAmount);
         showBill();
     
     }
+
 
     public void setBundledDiscount(String item1, String item2, String DiscountAmount){
 
@@ -579,11 +532,13 @@ public class StaffInterface extends Interface implements ActionListener{
         this.DiscountBuffer = Integer.valueOf(DiscountAmount);
         containItem1 = false;
         containItem2 = false;
+        this.DiscountAmount=0;
         showBill();
 
     }
 
-    public int getDiscount(){return DiscountAmount;}
+    // end of define discount
+
 
     public static void main(String[] args) {
         new StaffInterface().MainMenu();

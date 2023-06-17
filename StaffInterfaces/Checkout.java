@@ -2,13 +2,11 @@ package StaffInterfaces;
 
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +15,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import Classes.Items;
+import Database.BillDatabase;
 
 
+// Checkout not an interface so dont inherit from Interface
 public class Checkout{
 
     List<Items> ListOfItems;
@@ -133,29 +133,8 @@ public class Checkout{
 
     private void addToBillHistory(List<Items> ListOfItems,String DiscountAmount,String BeforeDiscount, String AfterDiscount){
 
-        // Create new entry container
-        String newEntry = "\n|";
-
-        for (Items items : ListOfItems) {
-
-            if(items.getCount() > 0){
-
-                newEntry += items.getName() + ":";
-                newEntry += String.valueOf(items.getCount()) + "-";
-
-            }
-            
-        }
-        newEntry += "__" + DiscountAmount + ":" + BeforeDiscount + ":" + AfterDiscount + "|";
-                    
-            String s = System.getProperty("user.dir");
-            Path currentRelativePath = Paths.get(s);
-            s = currentRelativePath.toString()+"\\Database\\BillHistory.md";
-
-        try {Files.write(Paths.get(s), newEntry.getBytes(), StandardOpenOption.APPEND);}            
+        new BillDatabase().addToBillHistory(ListOfItems, DiscountAmount, BeforeDiscount, AfterDiscount);
         
-        // Error
-        catch (IOException e) {System.out.println("Error, Check file path");}            
     }
 
 }

@@ -7,7 +7,6 @@ import javax.swing.JTextField;
 import Classes.Interface;
 
 import java.awt.event.*;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
