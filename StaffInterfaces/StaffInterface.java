@@ -3,7 +3,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import Classes.Interface;
 import Classes.Items;
@@ -26,11 +25,6 @@ public class StaffInterface extends Interface implements ActionListener{
     JLabel NameText, PriceText, TypeText, QuantityText;
     JPanel TopPanel;
     JLabel[] ItemCount = new JLabel[GridRow-1];
-    
-    // Search panel
-    JPanel searchPanel;
-    JButton SearchButton;
-    JTextField SearchWord;
 
     // Next Previous
     JPanel NavigationPanel;
@@ -113,23 +107,6 @@ public class StaffInterface extends Interface implements ActionListener{
         ItemListPanel.setBackground(null);
         ItemsPanel.add(ItemListPanel);
 
-
-        // Search Button
-        SearchButton = new JButton("Search for Items: ");
-        SearchButton.addActionListener(this);
-
-        // Search Text Field
-        SearchWord = new JTextField(15);
-
-        // Search Panel
-        searchPanel = new JPanel();
-        searchPanel.add(SearchButton);
-        searchPanel.add(SearchWord);
-        searchPanel.setBackground(Color.GRAY);
-        searchPanel.setBounds(0, 725, 400, 70);
-        searchPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        frame.add(searchPanel);
-
         // Navigation Button
         NextPage = new JButton("Next >");
         NextPage.addActionListener(this);
@@ -141,7 +118,7 @@ public class StaffInterface extends Interface implements ActionListener{
         
         // Navigation panel
         NavigationPanel = new JPanel();
-        NavigationPanel.setBounds(400, 725, 300, 75);
+        NavigationPanel.setBounds(0, 725, 700, 75);
         NavigationPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         NavigationPanel.setBackground(Color.GRAY);
         NavigationPanel.add(PreviousPage);
@@ -539,8 +516,4 @@ public class StaffInterface extends Interface implements ActionListener{
 
     // end of define discount
 
-
-    public static void main(String[] args) {
-        new StaffInterface().MainMenu();
-    }
 }

@@ -7,10 +7,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import Classes.Interface;
 import Database.Database;
 
-public class AddStaff extends Interface implements ActionListener{
+public class AddStaff extends AdminInterface{
     JLabel Notification;
     JTextField Name;
     JLabel TextName;

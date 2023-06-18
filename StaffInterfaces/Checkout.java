@@ -18,11 +18,9 @@ import Classes.Items;
 import Database.BillDatabase;
 
 
-// Checkout not an interface so dont inherit from Interface
-public class Checkout{
+public class Checkout extends StaffInterface{
 
     List<Items> ListOfItems;
-    JFrame frame;
     JPanel Bill;
     
     Checkout(List<Items> ListOfItems,String DiscountAmount,String BeforeDiscount, String AfterDiscount){

@@ -1,8 +1,6 @@
-import javax.swing.*;
-
 import MainInterface.Login;
 
-public class MiniGrocery extends JFrame{
+public class MiniGrocery{
  
     public MiniGrocery(){
 
