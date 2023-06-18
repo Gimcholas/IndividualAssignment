@@ -60,7 +60,7 @@ public class SetPassword extends Interface implements ActionListener{
         }
 
         // If valid password
-        else{new Database().ResetPassword(Role,Name,String.valueOf(NewPassword.getPassword()));}
+        else{new Database().ResetPassword(Role,Name,String.valueOf(NewPassword.getPassword()));frame.dispose();}
 
     }
 
