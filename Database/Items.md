@@ -20,7 +20,3 @@
 |Item 18|10|5|drinks|
 |Item 19|50|3|fruits|
 |Item 20|70|8|meat|
-|Item 21|70|8|canned food|
-|Item 22|50|3|canned food|
-|Item 23|70|8|meat|
-|Item 24|70|8|canned food|

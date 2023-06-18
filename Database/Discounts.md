@@ -1,4 +1,4 @@
 |Item Pair1|Item Pair2|Discount Amount|
 |----------|----------|---------------|
-|D.I.Y|toys|5|
-|canned food|drinks|
+|meat|drinks|3|
+|fruits|drinks|5|
